@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Malshinon.people
 {
-    internal class People
+    public class Person
     {
         public int id { get; }
         public string firstName { get; }
@@ -16,7 +16,7 @@ namespace Malshinon.people
         public int numReports { get; }
         public int numMentions { get; }
 
-        public People(int id, string firstName, string lastName, string secretCode,string type, int numReports, int numMentions)
+        public Person(int id, string firstName, string lastName, string secretCode,string type, int numReports, int numMentions)
         {
             this.id = id;
             this.firstName = firstName;
