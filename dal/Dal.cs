@@ -25,7 +25,7 @@ namespace Malshinon.dal
             return cmd;
         }
 
-        public void InsertNewPerson(People people)
+        public void InsertNewPerson(Person person)
         {
             string query = @"INSERT INTO people (first_name, last_name, secret_code, type)
                              VALUES (@first_name, @last_name, @secret_code, @type)";
@@ -33,10 +33,10 @@ namespace Malshinon.dal
             {
                 this.Conn.Open();
                 var cmd = this.Command(query);
-                cmd.Parameters.AddWithValue("@first_name", people.firstName);
-                cmd.Parameters.AddWithValue("@last_name", people.lastName);
-                cmd.Parameters.AddWithValue("@secret_code", people.secretCode);
-                cmd.Parameters.AddWithValue("@type", people.type);
+                cmd.Parameters.AddWithValue("@first_name", person.firstName);
+                cmd.Parameters.AddWithValue("@last_name", person.lastName);
+                cmd.Parameters.AddWithValue("@secret_code", person.secretCode);
+                cmd.Parameters.AddWithValue("@type", person.type);
                 cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -47,6 +47,43 @@ namespace Malshinon.dal
             {
                 this.Conn.Close();  
             }
+        }
+
+        public Person GetPersonByName(string name)
+        {
+            Person person = null;
+            string query = "SELECT * FROM people WHERE first_name = @first_name";
+            try
+            {
+                var cmd = this.Command(query);
+                cmd.Parameters.AddWithValue("@first_name", name);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    person = new Person
+                    (
+                        reader.GetInt32("id"),
+                        reader.GetString("first_name"),
+                        reader.GetString("last_name"),
+                        reader.GetString("secret_code"),
+                        reader.GetString("type"),
+                        reader.GetInt32("num_reports"),
+                        reader.GetInt32("num_mentions")
+                    );
+                }
+                reader.Close();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error retrieving person: " + ex.Message);
+            }
+            finally
+            {
+                this.Conn.Close();
+            }
+            return person;
+
         }
     }
 }
